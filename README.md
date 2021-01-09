@@ -17,9 +17,8 @@ Convert "myfile.ipynb" Jupyter Notebook to  "myfile.jl" Pluto notebook
 - [ ] Cell Structures are kept intact
   - [X] Markdown are wrapped around md"""triple quotes"""
   - [ ] Multiple Expressions wrapped around  begin-end block
-- [X] Handles Cells begining with `;` or `?`
+- [X] Skips Cells begining with `;` or `?`
 - [X] No Python Dependency
-- [ ] PlutoUI => Widget
 
 ## Potential Issues
 - Pluto doesnot allow multiple definition for same variable name in different blocks but jupyter notebook does.
