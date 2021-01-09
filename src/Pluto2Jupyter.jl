@@ -8,7 +8,7 @@ nb2jl("myfile.ipynb")
 to convert Jupyter Notebook to "myfile.jl" Pluto Notebook
 """
 module Pluto2Jupyter
-
+export nb2jl, jl2nb
 using JSON, UUIDs, Pluto
 
 """
@@ -17,7 +17,7 @@ using JSON, UUIDs, Pluto
 Convert Jupyter Notebook to Pluto Notebook
 """
 function nb2jl(path::AbstractString)
-    # test if Notebook file
+
     nb = open(JSON.parse, path, "r")
 
     # test if notebook is acceptable
@@ -42,6 +42,57 @@ function nb2jl(path::AbstractString)
     savepath = string(path[1:end-5],"jl")
     plutonb = Pluto.Notebook(nbcells,savepath)
     Pluto.save_notebook(plutonb,savepath);
+end
+
+
+"""
+    jl2nb(path::AbstractString)
+
+Convert Pluto Notebook to Jupyter Notebook
+"""
+function jl2nb(path::AbstractString)
+    plutonb = Pluto.load_notebook_nobackup(path)
+    nbcells = []
+    counter = 1
+    for cell in plutonb.cells
+        tempcell = Dict("cell_type"=> "code",
+        "metadata"=> Dict(),
+        "source"=>[])
+
+        if occursin(r"^(md\"\"\")",cell.code)
+            tempcell["cell_type"]= "markdown"
+            push!(tempcell["source"],cell.code[6:end-3])
+        else
+            push!(tempcell["source"],cell.code)
+            tempcell["outputs"]=[]
+            tempcell["execution_count"]= counter
+            counter +=1
+        end
+        push!(nbcells,tempcell)
+    end
+
+    # Todo: get version and spec from the system
+    language_info = Dict("file_extension" => ".jl",
+    "mimetype" => "application/julia",
+    "name" => "julia",
+    "version" => "1.5.3")
+    kernelspec = Dict(
+        "display_name"=> "Julia 1.5.3",
+        "language"=> "julia",
+        "name"=> "julia-1.5"
+       )
+    metadata = Dict("language_info"=>language_info,
+        "kernelspec"=>kernelspec)
+
+    nb = Dict("cells"=>nbcells,
+            "metadata" => metadata,
+            "nbformat" => 4,
+            "nbformat_minor" => 2)
+            
+    savepath = string(path[1:end-2],"ipynb")
+    open(savepath,"w") do f
+        write(f,JSON.json(nb))
+    end
 end
 
 
