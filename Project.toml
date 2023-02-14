@@ -1,0 +1,17 @@
+name = "Pluto2Jupyter"
+uuid = "e639118c-ac9c-11ed-afa1-0242ac120002"
+version = "0.1.0"
+
+[deps]
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
+[compat]
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
